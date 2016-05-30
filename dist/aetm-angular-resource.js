@@ -42,6 +42,25 @@
                 };
 
                 /**
+                 * Check `cache` attribute of actions objects and active local cache if === true.
+                 *
+                 * @param  Object actions
+                 * @return Object
+                 */
+                function prepareActions(actions) {
+                    for (var action in actions) {
+                        if (actions.hasOwnProperty(action)) {
+
+                            if(actions[action].cache === true) {
+                                actions[action].cache = cacheResource;
+                            }
+                        }
+                    }
+
+                    return angular.merge({}, actionDefaults, actions);
+                }
+
+                /**
                  * @param  String url
                  * @param  Object paramDefaults
                  * @param  Object actions
@@ -54,7 +73,7 @@
                     resource = $resource(
                         url,
                         paramDefaults,
-                        angular.merge({}, actionDefaults, actions),
+                        prepareActions(actions),
                         options
                     );
 
