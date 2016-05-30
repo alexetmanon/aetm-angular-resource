@@ -76,7 +76,7 @@
                     resource = $resource(
                         url,
                         paramDefaults,
-                        prepareActions(actions),
+                        prepareActions(actions,  cacheResource),
                         options
                     );
 
