@@ -8,11 +8,9 @@
         ])
         .factory('aetmResource', [
             '$resource',
-            '$q',
             'CacheFactory',
-            function ($resource, $q, CacheFactory) {
+            function ($resource, CacheFactory) {
                 var resource,
-                    resourceBaseUrl,
                     cacheResourceId,
                     cacheResource,
                     actionDefaults;
@@ -44,48 +42,22 @@
                 };
 
                 /**
-                 * Transforms stored query response into an array of values.
+                 * Check `cache` attribute of actions objects and active local cache if === true.
                  *
-                 * @return Array
+                 * @param  Object actions
+                 * @return Object
                  */
-                function prepareDataFromCache() {
-                    var rawCachedQuery = cacheResource.get(resourceBaseUrl);
+                function prepareActions(actions) {
+                    for (var action in actions) {
+                        if (actions.hasOwnProperty(action)) {
 
-                    if (rawCachedQuery && rawCachedQuery.$$state.status === 1) {
-                        return angular.fromJson(rawCachedQuery.$$state.value.data);
-                    }
-
-                    return [];
-                }
-
-                /**
-                 * Custom `get` function to avoid new request if the data are already there. eg. After a query request to see the detail of an element.
-                 * This function first looks in the query cache to return a `$resource` like object or perform a request through the classic get() function of `$resource` if needed.
-                 *
-                 * @param  Object params
-                 * @param  Function success
-                 * @param  Function error
-                 * @return Promise
-                 */
-                function getFromQuery(params, success, error) {
-                    var getData = {},
-                        cachedQuery = prepareDataFromCache(),
-                        i,
-                        len = cachedQuery.length;
-
-                    // search for the given ID
-                    for (i = 0; i < len; i += 1) {
-                        if (cachedQuery[i].id === params.id) {
-                            success(cachedQuery[i]);
-
-                            return angular.extend(cachedQuery[i], {
-                                '$promise': $q.resolve(cachedQuery[i]),
-                                '$resolved': true
-                            });
+                            if(actions[action].cache === true) {
+                                actions[action].cache = cacheResource;
+                            }
                         }
                     }
 
-                    return resource.get(params, success, error);
+                    return angular.merge({}, actionDefaults, actions);
                 }
 
                 /**
@@ -96,21 +68,14 @@
                  * @return $resource
                  */
                 return function (url, paramDefaults, actions, options) {
-                    // basicaly removes all `:param`
-                    resourceBaseUrl = url.replace(/(\/\:\w*)/g, '');
 
                     // use standard $resource with override actions
                     resource = $resource(
                         url,
                         paramDefaults,
-                        angular.merge({}, actionDefaults, actions),
+                        prepareActions(actions),
                         options
                     );
-
-                    /**
-                     *
-                     */
-                    resource.getFromQuery = getFromQuery;
 
                     /**
                      * Removes all cached requests.
