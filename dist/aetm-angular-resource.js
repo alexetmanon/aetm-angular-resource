@@ -61,12 +61,17 @@
                  * @return $resource
                  */
                 return function (url, paramDefaults, actions, options) {
-                    cacheResourceId = 'aetm-resource-cache-' + options.cacheId ? options.cacheId : 'default';
+                    var cacheId = (options && options.cacheId) ? options.cacheId : 'default';
 
-                    // create cache with a random ID
-                    cacheResource = CacheFactory.createCache(cacheResourceId, {
-                        storageMode: 'localStorage'
-                    });
+                    cacheResourceId = 'aetm-resource-cache-' + cacheId;
+
+                    // init cache
+                    cacheResource = CacheFactory.get(cacheResourceId);
+                    if (!cacheResource) {
+                        cacheResource = CacheFactory.createCache(cacheResourceId, {
+                            storageMode: 'localStorage'
+                        });
+                    }
 
                     // use standard $resource with override actions
                     resource = $resource(
