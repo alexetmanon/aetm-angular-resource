@@ -1,0 +1,34 @@
+{
+  "name": "aetm-angular-resource",
+  "authors": [
+    "Alexandre Bonhomme <wall-e@alexetmanon.com> (http://www.alexetmanon.com)"
+  ],
+  "description": "",
+  "main": "./dist/aetm-angular-resource.js",
+  "moduleType": [],
+  "keywords": [
+    "angularjs",
+    "angular",
+    "ngResource",
+    "$resource"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "make-release.sh",
+    "gulpfile.js"
+  ],
+  "dependencies": {
+    "angular": "^1.5.3",
+    "angular-resource": "^1.5.3",
+    "angular-cache": "^4.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:alexetmanon/aetm-angular-resource.git"
+  }
+}
