@@ -10,41 +10,36 @@
             '$resource',
             'CacheFactory',
             function ($resource, CacheFactory) {
-                var resource,
-                    cacheResourceId,
-                    cacheResource,
-                    actionDefaults;
-
-                // Defines default actions to override default $resource ones
-                actionDefaults = {
-                    query: {
-                        method: 'GET',
-                        isArray: true,
-                        cache: cacheResource
-                    },
-                    get: {
-                        method: 'GET',
-                        cache: cacheResource
-                    },
-                    create: {
-                        method: 'POST'
-                    },
-                    update: {
-                        method: 'PUT'
-                    }
-                };
-
                 /**
-                 * Check `cache` attribute of actions objects and active local cache if === true.
+                 * Adds default actions to given by user and active cache if needed.
                  *
                  * @param  Object actions
                  * @return Object
                  */
-                function prepareActions(actions) {
-                    for (var action in actions) {
+                function prepareActions(actions, cacheResource) {
+                    var action,
+                        actionDefaults = {
+                        query: {
+                            method: 'GET',
+                            isArray: true,
+                            cache: cacheResource
+                        },
+                        get: {
+                            method: 'GET',
+                            cache: cacheResource
+                        },
+                        create: {
+                            method: 'POST'
+                        },
+                        update: {
+                            method: 'PUT'
+                        }
+                    };
+
+                    for (action in actions) {
                         if (actions.hasOwnProperty(action)) {
 
-                            if(actions[action].cache === true) {
+                            if (actions[action].cache === true) {
                                 actions[action].cache = cacheResource;
                             }
                         }
@@ -61,9 +56,13 @@
                  * @return $resource
                  */
                 return function (url, paramDefaults, actions, options) {
-                    var cacheId = (options && options.cacheId) ? options.cacheId : 'default';
+                    var resource,
+                        cacheResourceId,
+                        cacheResource,
+                        actionDefaults;
 
-                    cacheResourceId = 'aetm-resource-cache-' + cacheId;
+                    // Compute cache resource ID from 'cacheId' option
+                    cacheResourceId = 'aetm-resource-cache-' + (options && options.cacheId) ? options.cacheId : 'default';
 
                     // init cache
                     cacheResource = CacheFactory.get(cacheResourceId);
@@ -73,7 +72,7 @@
                         });
                     }
 
-                    // use standard $resource with override actions
+                    // init standard $resource with override actions
                     resource = $resource(
                         url,
                         paramDefaults,
