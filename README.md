@@ -1,0 +1,1 @@
+# aetm-angular-resource
