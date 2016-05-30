@@ -15,13 +15,6 @@
                     cacheResource,
                     actionDefaults;
 
-                cacheResourceId = 'aetm-resource-cache-' + Math.random().toString(36).slice(2);
-
-                // create cache with a random ID
-                cacheResource = CacheFactory.createCache(cacheResourceId, {
-                    storageMode: 'localStorage'
-                });
-
                 // Defines default actions to override default $resource ones
                 actionDefaults = {
                     query: {
@@ -68,6 +61,12 @@
                  * @return $resource
                  */
                 return function (url, paramDefaults, actions, options) {
+                    cacheResourceId = 'aetm-resource-cache-' + options.cacheId ? options.cacheId : 'default';
+
+                    // create cache with a random ID
+                    cacheResource = CacheFactory.createCache(cacheResourceId, {
+                        storageMode: 'localStorage'
+                    });
 
                     // use standard $resource with override actions
                     resource = $resource(
