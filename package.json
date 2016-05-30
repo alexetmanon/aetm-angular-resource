@@ -1,6 +1,6 @@
 {
   "name": "aetm-angular-resource",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "./dist/aetm-angular-resource.js",
   "scripts": {
