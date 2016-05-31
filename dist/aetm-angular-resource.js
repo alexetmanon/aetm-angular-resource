@@ -83,7 +83,7 @@
                  * @param  Object actions
                  * @return Object
                  */
-                function prepareActions(actions, cacheResource, requestsBuffer) {
+                function prepareActions(actions, resourceCache, requestsBuffer) {
                     var action,
                         actionDefaults,
                         cacheInterceptor;
@@ -99,12 +99,12 @@
                     actionDefaults = {
                         get: {
                             method: 'GET',
-                            cache: cacheResource
+                            cache: resourceCache
                         },
                         query: {
                             method: 'GET',
                             isArray: true,
-                            cache: cacheResource
+                            cache: resourceCache
                         },
                         save: {
                             method: 'POST',
@@ -134,7 +134,7 @@
                     for (action in actions) {
                         if (actions.hasOwnProperty(action)) {
                             if (actions[action].cache === true) {
-                                actions[action].cache = cacheResource;
+                                actions[action].cache = resourceCache;
                             }
                         }
                     }
@@ -151,18 +151,18 @@
                  */
                 return function (url, paramDefaults, actions, options) {
                     var resource,
-                        cacheResourceId,
-                        cacheResource,
+                        resourceCacheId,
+                        resourceCache,
                         actionDefaults,
                         requestsBuffer;
 
                     // Compute cache resource ID from 'cacheId' option
-                    cacheResourceId = 'aetm-resource-cache-' + (options && options.cacheId) ? options.cacheId : 'default';
+                    resourceCacheId = 'aetm-resource-cache-' + (options && options.cacheId) ? options.cacheId : 'default';
 
                     // init cache
-                    cacheResource = CacheFactory.get(cacheResourceId);
-                    if (!cacheResource) {
-                        cacheResource = CacheFactory.createCache(cacheResourceId, {
+                    resourceCache = CacheFactory.get(resourceCacheId);
+                    if (!resourceCache) {
+                        resourceCache = CacheFactory.createCache(resourceCacheId, {
                             storageMode: 'localStorage'
                         });
                     }
@@ -179,7 +179,7 @@
                     resource = $resource(
                         url,
                         paramDefaults,
-                        prepareActions(actions,  cacheResource, requestsBuffer),
+                        prepareActions(actions,  resourceCache, requestsBuffer),
                         options
                     );
 
@@ -187,14 +187,14 @@
                      * Removes all cached requests.
                      */
                     resource.invalidateCache = function () {
-                        cacheResource.removeAll();
+                        resourceCache.removeAll();
                     };
 
                     /**
                      * @return Cache
                      */
                     resource.getCache = function () {
-                        return cacheResource;
+                        return resourceCache;
                     };
 
                     return resource;
