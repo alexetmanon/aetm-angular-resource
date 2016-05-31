@@ -64,6 +64,8 @@
                         // HACK: http://www.bennadel.com/blog/2800-forcing-q-notify-to-execute-with-a-no-op-in-angularjs.htm
                         deferred.promise.then(null, null, angular.noop);
 
+                        // Informs that request is delayed
+                        // TODO: return a more consistent object
                         deferred.notify({
                             status: 'offline'
                         });
