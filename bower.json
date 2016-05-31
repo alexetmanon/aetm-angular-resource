@@ -25,7 +25,8 @@
   "dependencies": {
     "angular": "^1.5.3",
     "angular-resource": "^1.5.3",
-    "angular-cache": "^4.6.0"
+    "angular-cache": "^4.6.0",
+    "aetm-angular-cordova-network": "^0.3.0"
   },
   "repository": {
     "type": "git",
